@@ -5,8 +5,9 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/sachinsachhu10-cloud/demo-app.git'
-                credentialsId: 'sachinsachhu10-cloud/****** (github pat)'
+                git branch: 'main',
+                    url: 'https://github.com/sachinsachhu10-cloud/cicd.git',
+                    credentialsId: 'github-token'
             }
         }
 
