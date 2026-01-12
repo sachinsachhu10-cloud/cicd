@@ -2,12 +2,9 @@ pipeline {
     agent any
 
     stages {
-
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/sachinsachhu10-cloud/cicd.git',
-                    credentialsId: 'github-token'
+                git 'https://github.com/sachinsachhu10-cloud/java-cicd-project.git'
             }
         }
 
@@ -19,16 +16,20 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t demo-app:latest .'
+                sh 'docker build -t sachinsachhu10/java-app:latest .'
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Docker Push') {
             steps {
-                sh '''
-                  kubectl apply -f deployment.yaml
-                  kubectl apply -f service.yaml
-                '''
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+                    sh 'docker login -u $USER -p $PASS'
+                    sh 'docker push sachinsachhu10/java-app:latest'
+                }
             }
         }
     }
